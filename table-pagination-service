@@ -1,0 +1,27 @@
+import { Injectable, signal, computed } from '@angular/core';
+
+@Injectable()
+export class TablePaginationService<T> {
+  public data = signal<T[]>([]);
+  public currentPage = signal<number>(1);
+  public pageSize = signal<number>(5);
+
+  public paginatedData = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.pageSize();
+    return this.data().slice(startIndex, startIndex + this.pageSize());
+  });
+
+
+
+  public totalPages = computed(() =>
+    Math.ceil(this.data().length / this.pageSize())
+  );
+  
+
+  setData(newData: T[]) {
+    this.data.set(newData);
+    this.currentPage.set(1);
+  }
+}
+
+
