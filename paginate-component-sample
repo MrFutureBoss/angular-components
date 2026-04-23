@@ -1,0 +1,41 @@
+import { Component, inject } from '@angular/core';
+import { TablePaginationService } from '../../../../core/services/pagination/table-pagination/table-pagination.service';
+import { Router, ActivatedRoute } from '@angular/router';
+
+@Component({
+  selector: 'app-table-pagination',
+  standalone: true, // Nếu bạn dùng Angular 17+
+  imports: [],
+  templateUrl: './table-pagination.html',
+  styleUrl: './table-pagination.css',
+})
+export class TablePagination {
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
+  public pgService = inject(TablePaginationService);
+  tablePaginationService = inject(TablePaginationService);
+
+  ngOnInit() {
+    const pageFromUrl = this.route.snapshot.queryParamMap.get('page');
+    if (pageFromUrl) {
+      const pageNum = Number(pageFromUrl);
+      this.pgService.currentPage.set(pageNum);
+    }
+  }
+
+  changePage(page: number) {
+    if (page >= 1 && page <= this.pgService.totalPages()) {
+      this.pgService.currentPage.set(page);
+
+      this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { page: page },
+        queryParamsHandling: 'merge',
+      });
+    }
+  }
+  getPagesArray(): number[] {
+    const total = this.tablePaginationService.totalPages();
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+}
