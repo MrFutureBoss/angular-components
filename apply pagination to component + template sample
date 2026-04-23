@@ -1,0 +1,31 @@
+@Component({
+  selector: 'app-demo-table',
+  standalone: true,
+  imports: [SkeletonTable, SkeletonDropdownMenu, TablePagination, SkeletonTablePagination],
+  providers: [TablePaginationService],
+  templateUrl: './demo-table.html',
+  styleUrl: './demo-table.css',
+})
+export class DemoTable {
+  public pgService = inject(TablePaginationService<TransactionItem>);
+  private highlightService = inject(HighlightService)
+  loading = signal<boolean>(false)
+
+  constructor() {
+    effect(() => {
+      const dataToPaginate = this.sortedData();
+      this.pgService.setData(dataToPaginate);
+    });
+    setTimeout(() => this.loading.set(false), 1500);
+  }
+
+ @for (item of pgService.paginatedData(); track item.id; let i = $index) {
+            <tr class="cursor-pointer odd:bg-primary/10 h-10 hover:bg-primary/20">
+              <td> {{ (pgService.currentPage() - 1) * pgService.pageSize() + (i + 1) }}</td>
+              @for (col of visibleColumns(); track col) {
+                <td
+                  [class]="highlightTextFromSearch($any(item)[col]) ? 'bg-yellow-200 text-zinc-700 font-bold' : '' ">{{ $any(item)[col] || '-' }}
+                </td>
+              }
+            </tr>
+          }
