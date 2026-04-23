@@ -1,0 +1,21 @@
+<div class="join flex gap-x-2">
+  <button
+    (click)="changePage(pgService.currentPage() - 1)"
+    [disabled]="tablePaginationService.currentPage() === 1"
+    class="join-item btn btn-outline border border-primary w-fit">Previous
+  </button>
+  <div class="join">
+    @for (p of getPagesArray(); track p) {
+      <button
+        class="join-item btn btn-square"
+        [class]="tablePaginationService.currentPage() === p ? 'bg-primary text-white' : ''"
+        (click)="changePage(p)">
+        {{ p }}
+      </button>
+    }
+  </div>
+  <button (click)="changePage(pgService.currentPage() + 1)"
+          [disabled]="tablePaginationService.currentPage() === tablePaginationService.totalPages()"
+          class="join-item btn btn-outline border border-primary w-fit">Next
+  </button>
+</div>
